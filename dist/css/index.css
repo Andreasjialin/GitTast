@@ -1,0 +1,13 @@
+@charset "UTF-8";
+* {
+  margin: 0px;
+  padding: 0px; }
+
+#div1 {
+  width: 200px;
+  height: 200px;
+  background-color: red; }
+
+/*
+    我是注释
+*/
