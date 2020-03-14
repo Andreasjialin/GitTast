@@ -109,7 +109,7 @@ const connect = require("gulp-connect");
 gulp.task("server", function(){
     connect.server({
         root: "dist",   //指定服务器的根目录
-        port: 8888,
+        port: 8885,
         livereload: true //启动实时刷新
     })
 })
