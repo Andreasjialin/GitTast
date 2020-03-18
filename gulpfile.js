@@ -7,16 +7,13 @@ const gulp = require("gulp");
 
     运行任务：需要在控制台输入  gulp 任务名
 */
-gulp.task("hello", function(){
-    console.log("hello world");
-})
 
 //简单的操作
 //拷贝和整理.html文件  gulp.src 文件的源路径  gulp.dest() 文件的目的路径(不存在，会自动创建)  pipe方法进行执行
 gulp.task("copy-html", function(){
-    return gulp.src("index.html")
+    return gulp.src("*.html")
     .pipe(gulp.dest("dist/"))
-    .pipe(connect.reload());
+    .pipe(connect.reload());//实时同步，每次保存刷新下
 })
 
 //拷贝图片
@@ -27,11 +24,12 @@ gulp.task("images", function(){
     //拷贝所有的图片，包括文件夹外的和文件夹内部的
     return gulp.src("images/**/*")
     .pipe(gulp.dest("dist/images"))
+    .pipe(connect.reload());
 })
 
 //拷贝数据源  我们将多个文件夹中的文件，拷贝到一个文件夹内部去
 gulp.task("data", function(){
-    return gulp.src(["xml/*.xml", "json/*.json", "!json/4.json"])
+    return gulp.src(["xml/*.xml", "json/*.json"])
     .pipe(gulp.dest("dist/data"))
     .pipe(connect.reload());
 })
@@ -56,15 +54,13 @@ const sass = require("gulp-sass");
 const minifyCSS = require("gulp-minify-css");//压缩css
 const rename = require("gulp-rename");//重命名插件
 
-gulp.task("sass", function(){
-    return gulp.src("sass/index.scss")
-    .pipe(sass())
-    .pipe(gulp.dest("dist/css"))
-    .pipe(minifyCSS())
-    .pipe(rename("index.min.css"))
+gulp.task("scss", function(){
+    return gulp.src("*.css")
     .pipe(gulp.dest("dist/css"))
     .pipe(connect.reload());
 })
+
+
 
 //由于1.js和2.js，所写的代码属于同一类功能的函数
 //将两个文件中的内容进行合并，
@@ -73,11 +69,7 @@ const concat = require("gulp-concat");
 const uglify = require("gulp-uglify");
 
 gulp.task("scripts", function(){
-    return gulp.src(["javascript1/1.js", "javascript/2.js"])
-    .pipe(concat("index.js"))  //写合并成功以后，新文件的名字
-    .pipe(gulp.dest("dist/js"))
-    .pipe(uglify())
-    .pipe(rename("index.min.js"))
+    return gulp.src(["*.js", "!gulpfile.js"])
     .pipe(gulp.dest("dist/js"))
     .pipe(connect.reload());
 
@@ -94,11 +86,11 @@ gulp.task("build", ["copy-html", "images", "data", 'scss', 'scripts'], function(
 gulp.task("watch", function(){
     //编写我们监听的文件  
     //第一个参数  监听文件路径  第二个参数（数组）  执行的任务
-    gulp.watch("index.html", ["copy-html"]);
+    gulp.watch("*.html", ["copy-html"]);
     gulp.watch("images/**/*", ["images"]);
-    gulp.watch(["xml/*.xml", "json/*.json", "!json/4.json"], ["data"]);
-    gulp.watch("scss/index.scss", ['sass']);
-    gulp.watch(["javascript1/1.js", "javascript/2.js"], ['scripts']);
+    gulp.watch(["*.json"], ["data"]);
+    gulp.watch("scss/*.scss", ['css']);
+    gulp.watch(["*.js","!gulpfile.js"], ['scripts']);
 
 })
 
@@ -109,7 +101,7 @@ const connect = require("gulp-connect");
 gulp.task("server", function(){
     connect.server({
         root: "dist",   //指定服务器的根目录
-        port: 8885,
+        port: 9995,
         livereload: true //启动实时刷新
     })
 })
